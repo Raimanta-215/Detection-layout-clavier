@@ -3,7 +3,7 @@ def main():
     print("PROJET LAYOUT")
 
     image_path = 'img/test_touches/A_1.png'
-    chemins_gabarits = 'gabarits/G_A_1.jpg'
+    chemins_gabarits = 'gabarits/G_A_2.jpg'
 
     detection_lettre(image_path,chemins_gabarits)
 

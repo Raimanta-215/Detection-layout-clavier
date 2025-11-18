@@ -23,12 +23,41 @@ def detection_lettre(image, gabarit):
     if gab.ndim == 3:
         gab = rgb2gray(gab)
 
+
+
+
     # --- BINARISATION SEULEMENT POUR L’IMAGE D’ENTRÉE ---
     th = threshold_otsu(img)
-    img_bin = (img > th).astype(np.float64)
+    img_bin = (img > th).astype(np.float32)
+
+    # -- DECOUPE ---
+
+    mask = (img > th).astype(np.uint8)
+
+    if mask.mean() < 0.5:
+        mask = 1 - mask
+
+    # -- ZONE BORNEE ---
+
+    ys, xs = np.where(mask == 1)
+
+    y_min, y_max = ys.min(), ys.max()
+    x_min, x_max = xs.min(), xs.max()
+
+    cropped_img = img_bin[y_min:y_max + 1, x_min:x_max + 1]
+
+    # -- PADDING ---
+
+    padding = 2
+    cropped_padded = np.pad(
+        cropped_img,
+        pad_width=padding,
+        mode='constant',
+        constant_values=0
+    )
 
     # --- NORMALISATION TAILLE ---
-    img_norm = resize(img_bin, (64, 64), anti_aliasing=True)
+    img_norm = resize(cropped_padded, (64, 64), anti_aliasing=True)
     gab_norm = resize(gab, (64, 64), anti_aliasing=True)
 
     # --- CORRÉLATION ---
