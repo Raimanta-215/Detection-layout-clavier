@@ -1,16 +1,12 @@
-from layout.detection_lettre import identifier_caractere
-from layout.detetction_lettre_v2 import classifieur_par_correlation
+from layout.detection_lettre_v4 import detection_lettre
 def main():
     print("PROJET LAYOUT")
 
     image_path = 'img/test_touches/A_1.png'
-    chemins_gabarits = {
-        'A': ['gabarits/A.jpg']
-    }
+    chemins_gabarits = 'gabarits/G_A_1.jpg'
 
-    #identifier_caractere(image_path, chemins_gabarits)
+    detection_lettre(image_path,chemins_gabarits)
 
-    classifieur_par_correlation(image_path,chemins_gabarits)
 
 
 
