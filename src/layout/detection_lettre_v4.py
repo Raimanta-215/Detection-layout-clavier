@@ -44,11 +44,11 @@ def detection_lettre(image, gabarit):
     y_min, y_max = ys.min(), ys.max()
     x_min, x_max = xs.min(), xs.max()
 
-    cropped_img = img_bin[y_min:y_max + 1, x_min:x_max + 1]
+    cropped_img = img_bin[y_min:y_max , x_min:x_max ]
 
     # -- PADDING ---
 
-    padding = 2
+    padding = 1
     cropped_padded = np.pad(
         cropped_img,
         pad_width=padding,
