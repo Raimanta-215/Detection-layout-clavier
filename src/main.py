@@ -12,9 +12,13 @@ def main():
         if choix == 1:
             test_detection_lettre()
         elif choix == 2:
+            choix_lettre = int(
+                input("Chiffre de l'image test 1 à 5\n")
+            )
+            choix_gabarit = int(input("chiffre gabarit de 1 à 3 \n"))
             detection_lettre(
-                "img/test_touches/A_3.png",
-                "gabarits/A/G_A_2.jpg",
+                f'img/test_touches/A_{choix_lettre}.png',
+                f'gabarits/A/G_A_{choix_gabarit}.jpg',
                 one=True
             )
 
