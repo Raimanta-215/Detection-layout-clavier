@@ -1,8 +1,8 @@
 import numpy as np
 
 def correlation(img1, img2):
-    img1 = img1.flatten()
-    img2 = img2.flatten()
+    img1 = img1 - np.mean(img1)
+    img2 = img2 - np.mean(img2)
 
     num = np.sum(img1 * img2)
     den = np.sqrt(np.sum(img1**2) * np.sum(img2**2))

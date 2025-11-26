@@ -5,6 +5,8 @@ from utils.correlation_v4 import correlation
 from skimage.io import imread
 from skimage.color import rgb2gray
 
+
+
 def detection_lettre(image, gabarit):
 
     # --- CHARGEMENT ---
