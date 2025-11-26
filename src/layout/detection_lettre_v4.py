@@ -1,6 +1,7 @@
 from utils.correlation_v4 import correlation
 from traitement_image.processing import preprocess_image
 import matplotlib.pyplot as plt
+from traitement_image.processing_type2 import preprocess_type2
 
 def detection_lettre(image, gabarit, one = False):
 
@@ -11,7 +12,29 @@ def detection_lettre(image, gabarit, one = False):
     gab_traite = preprocess_image(gabarit, final_size=(64, 64), is_gabarit=True)
 
 
-     #== test affichage ===
+
+
+    # --- CORRÉLATION ---
+    score = correlation(img_traitee.flatten(), gab_traite.flatten())
+
+    if score > 0.65:
+        print(f"Score de corrélation: {score:.4f}")
+        print("Lettre A.")
+    elif score < 0.65:
+        img_traitee  = preprocess_type2(image, final_size=(64, 64), is_gabarit=False)
+        score = correlation(img_traitee.flatten(), gab_traite.flatten())
+        print(f"RE  :Score de corrélation: {score:.4f}")
+
+        if score > 0.65:
+            print("Lettre A.")
+        else:print  ("Lettre inconnue.")
+        
+    else:
+        print("Lettre inconnue.")
+
+
+    #== test affichage ===
+
     if one:
 
         plt.figure(figsize=(10, 5))
@@ -25,11 +48,4 @@ def detection_lettre(image, gabarit, one = False):
 
         plt.show()
 
-    # --- CORRÉLATION ---
-    score = correlation(img_traitee.flatten(), gab_traite.flatten())
-    print(f"Score de corrélation: {score:.4f}")
-
-    if score > 0.65:
-        print("Lettre A.")
-    else:
-        print("Lettre inconnue.")
+    return score
