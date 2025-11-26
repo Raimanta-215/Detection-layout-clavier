@@ -4,7 +4,7 @@ from .rogner_lettre import rogner_lettre
 from .resize import resize
 import matplotlib.pyplot as plt
 
-def preprocess_image(input_data, final_size=(64, 64)):
+def preprocess_image(input_data, final_size=(64, 64), is_gabarit=False):
 
     # === 1. Charger l'image (déjà la version brute) ===
     if isinstance(input_data, str):
@@ -38,13 +38,23 @@ def preprocess_image(input_data, final_size=(64, 64)):
    
     # === 7. Rogner les bords vides ===
 
-    image_cropped = rogner_lettre(thresh, padding=5)
+    image_cropped = rogner_lettre(thresh, padding=5, is_gabarit=is_gabarit)
 
 
+    h, w = image_cropped.shape
+    corners = [
+        image_cropped[0, 0], image_cropped[0, w-1],
+        image_cropped[h-1, 0], image_cropped[h-1, w-1]
+    ]
+
+    if np.mean(corners) > 127:
+        good_img = cv2.bitwise_not(image_cropped)
+    else:
+        good_img = image_cropped
     
 
     if final_size is not None:
-            result = resize(image_cropped, target_size=final_size)
+            result = resize(good_img, target_size=final_size)
             return result / 255.0 
     
 
