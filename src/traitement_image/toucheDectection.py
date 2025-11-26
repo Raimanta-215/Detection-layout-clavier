@@ -4,20 +4,29 @@ import skimage as skim
 from skimage.transform import resize
 
 #Lire l'image et mettre en niveau de gris
-I = skim.img_as_float(plt.imread('img/AZERTY_francais.jpg'))
+I = skim.img_as_float(plt.imread('img/Querty.jpg'))
 I_gray = skim.color.rgb2gray(I)
 
 
-I_inverted = 1 - I_gray 
+# Déterminer si l'inversion est nécessaire (seuillage de robustesse)
+LUMINOSITE_MOYENNE = I_gray.mean()
+print(f"Luminosité moyenne : {LUMINOSITE_MOYENNE:.2f}")
 
-# Utiliser un seuil local (adaptatif). block_size doit être plus grand que la taille des touches.
+# Inversion selon luminausite
+if LUMINOSITE_MOYENNE < 0.3:
+    I_inverted = 1 - I_gray
+    print("Image inversée pour le traitement.")
+else:
+    I_inverted = I_gray
+    print("Image non inversée.")
+
+# Utiliser un seuil local
 block_size = 51 
-local_thresh = skim.filters.threshold_local(I_inverted, block_size, offset=0.1) 
+local_thresh = skim.filters.threshold_local(I_inverted, block_size, offset=0.01) 
 binary = I_inverted > local_thresh
 
 # Nettoyage
 binary = skim.morphology.remove_small_objects(binary, min_size=300)
-
 
 # Labeliser les régions
 L, N = skim.measure.label(binary, return_num = True)
@@ -28,14 +37,13 @@ print(area_L)
 area_L1 = [props.bbox for props in regions] 
 print("BBBBOX : ", area_L1)
 
-# Filtrer les touches par tailles (gardons les bornes que vous avez utilisées)
+# Filtrer les touches par tailles 
 touches = []
 for prop in regions:
     minr, minc, maxr, maxc = prop.bbox
     h = maxr - minr
     w = maxc - minc
-    # Bornes H/W pour filtrer les touches de taille standard
-    if 20 < h < 60 and 20 < w < 150: 
+    if 15 < h < 75 and 15 < w < 200: 
         touches.append(prop)
 print(f'Nombre de touches filtrées: {len(touches)}')
 
@@ -45,27 +53,18 @@ centreY = np.array([(props.bbox[0] + props.bbox[2]) //2 for props in touches])
 second_row_y = np.median(centreY)  
 
 # Sélectionner les touches proches de cette rangée
-# Un seuil de 10 est souvent bon, mais vous pouvez l'ajuster (ex: 15-20)
-row_touches = [prop for i, prop in enumerate(touches) if abs(centreY[i] - second_row_y) < 15] 
+row_touches = [prop for i, prop in enumerate(touches) if abs(centreY[i] - second_row_y) < 25] 
 
 # Identifier Tab : touche la plus large ET la plus à gauche de cette rangée
-# On cherche la plus large comme avant, mais on ajoute une vérification pour s'assurer qu'elle est bien à gauche.
 tab_key_candidate = max(row_touches, key=lambda p: p.bbox[3] - p.bbox[1])
 
 # Une touche Tab est large et a un bbox_minc très faible dans la rangée.
-# Filtrons pour n'obtenir que les touches 'normales' (non-Caps Lock, non-Tab)
 standard_keys_in_row = [p for p in row_touches if (p.bbox[3]-p.bbox[1]) < 50] # Largeur standard
 
 # Après avoir identifié les touches standard dans la rangée
-# 1. Trier par position X (minc) pour avoir l'ordre Gauche -> Droite
 row_touches_sorted = sorted(standard_keys_in_row, key=lambda p: p.bbox[1])
 
-# On s'attend à ce que les deux premières touches triées de cette rangée (hors Tab/Caps Lock) soient nos cibles.
-# Si le filtrage des touches larges est correct, la première touche sera 'A' ou 'Q'
-# et la deuxième sera 'Z' ou 'W'.
-
 # Identifier Touche 1 (A/Q) et Touche 2 (Z/W)
-# On prend les 2 premières touches triées par position X dans la rangée filtrée
 if len(row_touches_sorted) >= 2:
     Touche1_key = row_touches_sorted[0]
     Touche2_key = row_touches_sorted[1]
@@ -113,13 +112,28 @@ TARGET_SIZE = (64, 64)
 image_A_resized = resize(image_A_gray, TARGET_SIZE, anti_aliasing=True)
 image_Z_resized = resize(image_Z_gray, TARGET_SIZE, anti_aliasing=True)
 
-# Binariser l'image A et Z
 thresh_A = skim.filters.threshold_otsu(image_A_resized)
-image_A_binary = image_A_resized > thresh_A
-
 thresh_Z = skim.filters.threshold_otsu(image_Z_resized)
-image_Z_binary = image_Z_resized > thresh_Z
+print(image_A_resized.mean())
+if image_A_resized.mean() < 0.5:
+    # Cas standard : Texte CLAIR sur fond SOMBRE (texte > seuil)
+    image_A_binary = image_A_resized > 0.75
+else:
+    # Cas inverse : Texte SOMBRE sur fond CLAIR (texte < seuil)
+    image_A_binary = image_A_resized < 0.25
 
+# Appliquer la même logique à la Touche 2
+if image_Z_resized.mean() < 0.5:
+    image_Z_binary = image_Z_resized > 0.75
+else:
+    image_Z_binary = image_Z_resized < 0.25
+
+if image_A_binary.mean() > 0.5:
+    # Si la moyenne est élevée après seuillage, on l'inverse.
+    image_A_binary = 1 - image_A_binary
+    
+if image_Z_binary.mean() > 0.5:
+    image_Z_binary = 1 - image_Z_binary
 
 # --- AFFICHAGE des résultats pour la vérification ---
 plt.figure(figsize=(10, 4))
