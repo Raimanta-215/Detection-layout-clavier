@@ -4,7 +4,7 @@ from layout.detection_lettre_v4 import detection_lettre
 def main():
 
     while True:
-        print("PROJET LAYOUT")
+        print("\n\nPROJET LAYOUT\n\n")
 
         choix = int(
             input("Choisissez une option:\n1. Tester la détection de lettres sur plusieurs images\n2. Tester la détection de lettres sur une image spécifique\nVotre choix: "))
