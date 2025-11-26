@@ -1,4 +1,5 @@
 from layout.detection_lettre_v4 import detection_lettre
+import matplotlib.pyplot as plt
 def main():
     print("PROJET LAYOUT")
 

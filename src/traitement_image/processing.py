@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
-
+from .rogner_lettre import rogner_lettre
+from .resize import resize
+import matplotlib.pyplot as plt
 
 def preprocess_image(input_data, final_size=(64, 64)):
 
@@ -34,8 +36,17 @@ def preprocess_image(input_data, final_size=(64, 64)):
     # === 6. Binarisation ===
     _, thresh = cv2.threshold(big, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
    
+    # === 7. Rogner les bords vides ===
+
+    image_cropped = rogner_lettre(thresh, padding=5)
+
+
+    
+
     if final_size is not None:
-            result = cv2.resize(thresh, final_size, interpolation=cv2.INTER_AREA)
+            result = resize(image_cropped, target_size=final_size)
             return result / 255.0 
+    
+
     
     return thresh
