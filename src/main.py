@@ -15,9 +15,13 @@ def main():
 
     #detection_lettre(image_path,chemins_gabarits)
 
-    chemin_image = Path("img/keyboard.jpg")
-    chemin_sortie = Path("img/clavier_recadrer/keyboard_recadre.jpg")
+    chemin_image = Path("img/dae03075-2ad0-416b-a9e5-02c1fba5e079.jpg")
+    chemin_sortie = Path("img/clavier_recadrer/dae03075-2ad0-416b-a9e5-02c1fba5e079_recadre.jpg")
 
+    image_orig = cv2.imread(str(chemin_image))
+    if image_orig is None:
+        print(f"Impossible de lire l'image d'origine : {chemin_image}")
+        return
     
     clavier = recadrer_clavier_depuis_fichier(chemin_image, chemin_sortie)
 
@@ -28,11 +32,23 @@ def main():
     print("✅ Clavier détecté et recadré !")
     print(f"📂 Image enregistrée dans : {chemin_sortie}")
 
-    # Affichage du résultat
+
+    image_orig_rgb = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
     clavier_rgb = cv2.cvtColor(clavier, cv2.COLOR_BGR2RGB)
+
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(image_orig_rgb)
+    plt.title("Clavier d'origine")
+    plt.axis("off")
+
+    plt.subplot(1, 2, 2)
     plt.imshow(clavier_rgb)
     plt.title("Clavier recadré")
     plt.axis("off")
+
+    plt.tight_layout()
     plt.show()
 
 
