@@ -15,8 +15,8 @@ def main():
 
     #detection_lettre(image_path,chemins_gabarits)
 
-    chemin_image = Path("img/dae03075-2ad0-416b-a9e5-02c1fba5e079.jpg")
-    chemin_sortie = Path("img/clavier_recadrer/dae03075-2ad0-416b-a9e5-02c1fba5e079_recadre.jpg")
+    chemin_image = Path("img/keyboard.jpg")
+    chemin_sortie = Path("img/clavier_recadrer/keyboard_recadre.jpg")
 
     image_orig = cv2.imread(str(chemin_image))
     if image_orig is None:
