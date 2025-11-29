@@ -18,7 +18,7 @@ def main():
     chemin_image = Path("img/keyboard.jpg")
     chemin_sortie = Path("img/clavier_recadrer/keyboard_recadre.jpg")
 
-    
+    image_originale = cv2.imread(str(chemin_image))
     clavier = recadrer_clavier_depuis_fichier(chemin_image, chemin_sortie)
 
     if clavier is None:
@@ -28,11 +28,23 @@ def main():
     print("✅ Clavier détecté et recadré !")
     print(f"📂 Image enregistrée dans : {chemin_sortie}")
 
-    # Affichage du résultat
-    clavier_rgb = cv2.cvtColor(clavier, cv2.COLOR_BGR2RGB)
-    plt.imshow(clavier_rgb)
+    img_orig_rgb = cv2.cvtColor(image_originale, cv2.COLOR_BGR2RGB)
+    img_recadre_rgb = cv2.cvtColor(clavier, cv2.COLOR_BGR2RGB)
+
+    plt.figure(figsize=(15, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(img_orig_rgb)
+    plt.title("Clavier d'origine")
+    plt.axis("off")
+
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(img_recadre_rgb)
     plt.title("Clavier recadré")
     plt.axis("off")
+
+    plt.tight_layout()
     plt.show()
 
 
