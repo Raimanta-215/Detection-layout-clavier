@@ -15,8 +15,8 @@ def main():
 
     #detection_lettre(image_path,chemins_gabarits)
 
-    chemin_image = Path("img/51nZVyqGJjL.jpg")
-    chemin_sortie = Path("img/clavier_recadrer/51nZVyqGJjL_recadre.jpg")
+    chemin_image = Path("img/171659539527.jpg")
+    chemin_sortie = Path("img/clavier_recadrer/171659539527_recadre.jpg")
 
     image_originale = cv2.imread(str(chemin_image))
     clavier = recadrer_clavier_depuis_fichier(chemin_image, chemin_sortie)
