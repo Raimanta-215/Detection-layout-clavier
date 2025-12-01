@@ -10,11 +10,6 @@ from src.traitement_image.recadrage_clavier import recadrer_clavier_depuis_fichi
 def main():
     print("PROJET LAYOUT")
 
-    #image_path = 'img/test_touches/A_1.png'
-    #chemins_gabarits = 'gabarits/G_A_1.jpg'
-
-    #detection_lettre(image_path,chemins_gabarits)
-
     chemin_image = Path("img/171659539527.jpg")
     chemin_sortie = Path("img/clavier_recadrer/171659539527_recadre.jpg")
 
