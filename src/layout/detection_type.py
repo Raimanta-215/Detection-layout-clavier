@@ -17,7 +17,7 @@ def identifier_une_touche(touche):
         try:
             lettre_gab = get_lettre_gab(gabarit_path) 
             
-            score = detection_lettre(image_touche, gabarit_path, one=False)
+            score = detection_lettre(touche, gabarit_path, one=False)
             
             if score > meilleur_score:
                 meilleur_score = score
