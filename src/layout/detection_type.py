@@ -2,13 +2,14 @@ from layout.detection_lettre_v4 import detection_lettre_v4
 from layout.test_detetction_lettre import get_lettre_gab
 import os
 import glob
+from traitement_image.detectionTouche import preprocess_image
 
 
-def identification_lettre(touche_detected):
+def identification_lettre():
 
     all_agabrits = sorted(glob.glob("gabarits/*/*.jpg"))
 
-    touche = touche_detected
+    touche = preprocess_image()
 
 
     lettre_identifie = "Inconnue"
