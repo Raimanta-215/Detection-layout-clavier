@@ -157,6 +157,8 @@ def identify_A_Z_keys(row_touches):
       
   return None, None
 
+
+
 def crop_and_process(image, prop):
   minr, minc, maxr, maxc = prop.bbox
   img_brute = image[minr:maxr, minc:maxc]
@@ -208,3 +210,4 @@ plt.show()
 plt.imshow(img_digit2, cmap='gray')
 plt.show()
 """
+
