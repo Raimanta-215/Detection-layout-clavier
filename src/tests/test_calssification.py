@@ -1,130 +1,88 @@
 import os
 import sys
 import glob
-import numpy as np # Import nécessaire pour vérifier si c'est une image
 
+# Configuration des chemins pour importer les modules frères
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from traitement_image.detectionTouche import detec_key_image
 from layout.detection_type import classification
 
+# Couleurs pour la console
 VERT = '\033[92m'
 ROUGE = '\033[91m'
 JAUNE = '\033[93m'
 RESET = '\033[0m'
 
+def test_auto_classification(image_path, layout_attendu="QWERTY"):
+    nom_fichier = os.path.basename(image_path)
+    print(f"\n{JAUNE}=== Test sur l'image : {nom_fichier} ==={RESET}")
 
-
-def test_auto_classification(clvr):
-    print(f"\n{JAUNE}=== Lancement des Tests Automatiques de Classification ==={RESET}\n")
-
+    # 1. Extraction des touches (Traitement d'image)
     try:
-        img_reelle_1, img_reelle_2, dig = detec_key_image(clvr)
-        test_reel_dispo = True
+        # On essaie d'extraire les touches
+        img_touche_1, img_touche_2, dig = detec_key_image(image_path)
+        
+        # Vérification critique : Si detectionTouche renvoie None, on arrête tout de suite
+        if img_touche_1 is None:
+             print(f"{ROUGE}   [ECHEC CRITIQUE] Impossible d'isoler les touches (lignes non trouvées){RESET}")
+             return False
+
     except Exception as e:
-        print(f"{ROUGE}Attention: Impossible de charger l'image réelle {clvr}: {e}{RESET}")
-        test_reel_dispo = False
-        img_reelle_1, img_reelle_2 = None, None
+        print(f"{ROUGE}   [ERREUR TECHNIQUE] Lors de l'extraction : {e}{RESET}")
+        return False
 
-    scenarios = [
-        {
-            "nom": "Test clavier réél QWERTY (Extraction auto)",
-            "img1": img_reelle_1, 
-            "img2": img_reelle_2,
-            "attendu": "QWERTY",
-            "is_raw_image": True # Marqueur pour dire que ce n'est pas un chemin
-        }]
-
-    """
-        {
-            "nom": "Test AZERTY Classique",
-            "img1": "img/test_touches/A_1.png", 
-            "img2": "img/test_touches/Z_1.png",
-            "attendu": "AZERTY"
-        },
-        {
-            "nom": "Test QWERTY Classique",
-            "img1": "img/test_touches/Q_2.png",
-            "img2": "img/test_touches/W_1.png",
-            "attendu": "QWERTY"
-        },
-        {
-            "nom": "Test Partiel AZERTY (2ème touche ratée)",
-            "img1": "img/test_touches/A_1.png",
-            "img2": "img/test_touches/Q_2.png", 
-            "attendu": "AZERTY"
-        },
-        {
-            "nom": "Test Partiel QWERTY (1ère touche ratée)",
-            "img1": "img/test_touches/Q_2.png",
-            "img2": "img/test_touches/W_1.png",
-            "attendu": "QWERTY"
-        }
-        """
-
+    # 2. Classification (Reconnaissance des lettres)
+    print(f"   > Touches extraites avec succès. Lancement de l'identification...")
     
-
-    nb_reussites = 0
-    nb_tests = 0
-
-    for scenario in scenarios:
-        nom = scenario["nom"]
-        entree1 = scenario["img1"]
-        entree2 = scenario["img2"]
-        attendu = scenario["attendu"]
+    try:
+        # On lance la classification sur les images extraites (tableaux numpy)
+        resultat_obtenu = classification(img_touche_1, img_touche_2)
         
-        # Vérification spéciale pour le cas où l'extraction réelle a échoué
-        if scenario.get("is_raw_image") and not test_reel_dispo:
-            print(f"{ROUGE}[SKIP] {nom} : Extraction précédente échouée{RESET}")
-            continue
-
-        # Gestion différente si c'est un chemin (str) ou une image (array)
-        if isinstance(entree1, str):
-            # C'est un chemin de fichier
-            if not os.path.exists(entree1) or not os.path.exists(entree2):
-                print(f"{ROUGE}[SKIP] {nom} : Images introuvables ({entree1}){RESET}")
-                continue
-            nom_affich = f"{os.path.basename(entree1)} & {os.path.basename(entree2)}"
+        # 3. Vérification du résultat
+        if resultat_obtenu == layout_attendu:
+            print(f"   > Résultat : {VERT}{resultat_obtenu} (CORRECT){RESET}")
+            return True
         else:
-            # C'est une image directe (numpy array)
-            nom_affich = "Images en mémoire "
+            print(f"   > Résultat : {ROUGE}{resultat_obtenu} (FAUX - Attendu: {layout_attendu}){RESET}")
+            print(f"     {ROUGE}Analysez pourquoi : Le 'Q' a-t-il été vu comme un 'A' ?{RESET}")
+            return False
 
-        nb_tests += 1
-        print(f"Test : {nom}")
-        print(f"   Source : {nom_affich}")
-
-        try:
-            # On passe les arguments (soit des chemins, soit des images)
-            resultat_obtenu = classification(entree1, entree2)
-            
-            if resultat_obtenu == attendu:
-                print(f"   Résultat : {VERT}{resultat_obtenu} (CORRECT){RESET}")
-                nb_reussites += 1
-            else:
-                print(f"   Résultat : {ROUGE}{resultat_obtenu} (ATTENDU: {attendu}){RESET}")
-
-        except Exception as e:
-            print(f"   {ROUGE}Erreur technique : {e}{RESET}")
-        
-        print("-" * 40)
-
-    # --- BILAN ---
-    if nb_tests > 0:
-        score = (nb_reussites / nb_tests) * 100
-        couleur_finale = VERT if score == 100 else ROUGE
-        print(f"\n{couleur_finale}Bilan : {score:.0f}% de réussite ({nb_reussites}/{nb_tests} scénarios valides){RESET}")
-    else:
-        print(f"\n{ROUGE}Aucun test n'a pu être lancé.{RESET}")
-    
-
+    except Exception as e:
+        print(f"   {ROUGE}[ERREUR] Lors de la classification : {e}{RESET}")
+        return False
 
 
 def test_toutes_classifications():
-    toutes_img = sorted(glob.glob("img/clavier_recadrer/*.*"))
+    # On récupère toutes les images dans le dossier
+    extensions = ["*.jpg", "*.jpeg", "*.png"]
+    toutes_img = []
+    for ext in extensions:
+        toutes_img.extend(glob.glob(f"img/clavier_recadrer/{ext}"))
+    
+    toutes_img = sorted(toutes_img)
+    
+    total_files = 0
+    total_success = 0
+
+    if not toutes_img:
+        print(f"{ROUGE}Aucune image trouvée dans img/clavier_recadrer/{RESET}")
+        return
+
+    print(f"Début des tests sur {len(toutes_img)} images (Attente : TOUT QWERTY)...")
 
     for img_path in toutes_img:
-        print(f"\n--- Test automatique de classification pour l'image : {os.path.basename(img_path)} ---")
-        test_auto_classification(img_path)
+        # ICI : On force l'attente à QWERTY car vous avez confirmé que c'est le cas
+        succes = test_auto_classification(img_path, layout_attendu="QWERTY")
+        
+        total_files += 1
+        if succes:
+            total_success += 1
 
+    # Bilan Global
+    if total_files > 0:
+        pourcentage = (total_success / total_files) * 100
+        couleur = VERT if pourcentage > 80 else ROUGE
+        print(f"\n{couleur}=== BILAN FINAL : {pourcentage:.1f}% de réussite ({total_success}/{total_files} images) ==={RESET}")
 
 if __name__ == "__main__":
     test_toutes_classifications()
