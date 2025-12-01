@@ -176,40 +176,38 @@ def crop_and_process(image, prop):
   return img_binary
 
 ######SCRIPT
-I = skim.img_as_float(plt.imread('img/Querty_UK.jpg'))
-I_gray = skim.color.rgb2gray(I)
+def detec_key_image(image_path):
+    I = skim.img_as_float(plt.imread(image_path))
+    I_gray = skim.color.rgb2gray(I)
 
-# 1. Prétraitement et Nettoyage
-regions, binary = preprocess_image(I_gray)
-print(f'Régions détectées: {len(regions)}')
+    # 1. Prétraitement et Nettoyage
+    regions, binary = preprocess_image(I_gray)
+    print(f'Régions détectées: {len(regions)}')
 
-# 2. Ciblage de la rangée (retourne les touches de la rangée)
-row_touches_lettre, _, Touche2_key_digit = filter_touches(regions)
+    # 2. Ciblage de la rangée (retourne les touches de la rangée)
+    row_touches_lettre, _, Touche2_key_digit = filter_touches(regions)
 
-# 3. Identification des touches
-Touche1_key, Touche2_key = identify_A_Z_keys(row_touches_lettre)
+    # 3. Identification des touches
+    Touche1_key, Touche2_key = identify_A_Z_keys(row_touches_lettre)
 
-if Touche1_key is None or Touche2_key is None:
-    print("Erreur: Impossible d'identifier la Touche 1 ou la Touche 2.")
-    exit()
+    if Touche1_key is None or Touche2_key is None:
+        print("Erreur: Impossible d'identifier la Touche 1 ou la Touche 2.")
+        return None, None, None
+    
+    img_T1 = crop_and_process(I, Touche1_key)
+    img_T2 = crop_and_process(I, Touche2_key)
+    img_Tdigit = crop_and_process(I, Touche2_key_digit)
 
+    
+    return img_T1, img_T2, img_Tdigit
 
-# --- AFFICHAGE des résultats ---
-plt.figure(figsize=(12,3))
-plt.subplot(1,3,1)
-plt.imshow(crop_and_process(I, Touche1_key), cmap='gray')
-plt.title("Touche 1 (Q ou A)")
-plt.axis('off')
-
-plt.subplot(1,3,2)
-plt.imshow(crop_and_process(I, Touche2_key), cmap='gray')
-plt.title("Touche 2 (W ou Z)")
-plt.axis('off')
-
-plt.subplot(1,3,3)
-plt.imshow(crop_and_process(I, Touche2_key_digit), cmap='gray')
-plt.title("Touche Chiffre 2")
-plt.axis('off')
-
+"""
+img1, img2, img_digit2 = detec_key_image("img/Querty_UK.jpg")
+plt.imshow(img1, cmap='gray')
 plt.show()
+plt.imshow(img2, cmap='gray')
+plt.show()
+plt.imshow(img_digit2, cmap='gray')
+plt.show()
+"""
 
