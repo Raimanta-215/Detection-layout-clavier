@@ -2,7 +2,7 @@ from utils.correlation_v4 import correlation
 from traitement_image.processing import preprocess_image
 import matplotlib.pyplot as plt
 from traitement_image.processing_type2 import preprocess_type2
-
+import os
 
 def detection_lettre(image, gabarit, one = False):
 

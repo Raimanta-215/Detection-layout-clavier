@@ -1,47 +1,41 @@
-from layout.detection_lettre_v4 import detection_lettre_v4
+from layout.detection_lettre_v4 import detection_lettre
 from layout.test_detetction_lettre import get_lettre_gab
 import os
 import glob
 from traitement_image.detectionTouche import preprocess_image
 
 
-def identification_lettre():
+def identifier_une_touche(touche):
 
-    all_agabrits = sorted(glob.glob("gabarits/*/*.jpg"))
+    tous_les_gabarits = sorted(glob.glob("gabarits/*/*.jpg"))
 
-    touche = preprocess_image()
-
-
-    lettre_identifie = "Inconnue"
+    meilleur_score = 0
+    lettre_retenue = "Inconnue"
     seuil_score = 0.65
-
-    if  not all_agabrits:
-        print("Aucune image ou gabarit trouvé dans les dossiers spécifiés.")
-        return lettre_identifie
     
-    for gabarit_path in all_agabrits:
-
-
-        lettre_gab = get_lettre_gab(gabarit_path)
-        nom_gab = os.path.basename(gabarit_path)
-
+    for gabarit_path in tous_les_gabarits:
         try:
-            score_actuel = detection_lettre_v4(touche, gabarit_path, one=False)
-
-            if score_actuel > seuil_score:
-                lettre_identifie = lettre_gab
-                return lettre_identifie
-
+            lettre_gab = get_lettre_gab(gabarit_path) 
+            
+            score = detection_lettre(image_touche, gabarit_path, one=False)
+            
+            if score > meilleur_score:
+                meilleur_score = score
+                lettre_retenue = lettre_gab
                 
         except Exception as e:
-            print(f"Erreur lors du traitement de l'image avec le gabarit {nom_gab} : {e}")
+            print(f"Erreur avec le gabarit {gabarit_path}: {e}")
 
+    if meilleur_score > seuil_score:
+        return lettre_retenue
+    else:
+        return "Inconnue"
+    
 
+def classification ():
 
-def classification (premiere_touche, deuxieme_touche):
-
-    premiere_lettre = identification_lettre(premiere_touche)
-    deuxieme_lettre = identification_lettre(deuxieme_touche)
+    premiere_lettre = preprocess_image()[0]
+    deuxieme_lettre = preprocess_image()[1]
 
 
 
