@@ -1,4 +1,9 @@
-from layout.test_detetction_lettre import test_detection_lettre
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from test_detetction_lettre import test_detection_lettre
 from layout.detection_lettre_v4 import detection_lettre
 
 def main():

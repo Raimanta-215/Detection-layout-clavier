@@ -1,5 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from layout.detection_lettre_v4 import detection_lettre
-from layout.test_detetction_lettre import get_lettre_gab
+from tests.test_detetction_lettre import get_lettre_gab
 import glob
 
 def identifier_une_touche(touche):

@@ -26,6 +26,7 @@ def main():
     img_orig_rgb = cv2.cvtColor(image_originale, cv2.COLOR_BGR2RGB)
     img_recadre_rgb = cv2.cvtColor(clavier, cv2.COLOR_BGR2RGB)
 
+"""
     plt.figure(figsize=(15, 6))
 
     plt.subplot(1, 2, 1)
@@ -41,7 +42,7 @@ def main():
 
     plt.tight_layout()
     plt.show()
-
+"""
 
 if __name__ == "__main__":
     main()

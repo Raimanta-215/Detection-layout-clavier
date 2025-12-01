@@ -173,7 +173,9 @@ def crop_and_process(image, prop):
       
   if img_binary.mean() > 0.5:
       img_binary = 1 - img_binary
-  return img_binary
+
+  img_final = (img_binary * 255).astype(np.uint8)
+  return img_final
 
 ######SCRIPT
 def detec_key_image(image_path):

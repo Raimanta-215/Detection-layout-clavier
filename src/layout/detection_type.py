@@ -1,9 +1,11 @@
 from layout.identifier_touche import identifier_une_touche
-from traitement_image.detectionTouche import preprocess_image
+from traitement_image.detectionTouche import detec_key_image
 
 
 
-def classification (t1, t2):
+def classification (t1 , t2):
+
+
 
     premiere_touche = t1
     deuxieme_touche = t2
