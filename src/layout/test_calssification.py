@@ -24,7 +24,7 @@ def test_auto_classification():
         },
         {
             "nom": "Test QWERTY Classique",
-            "img1": "img/test_touches/Q_1.png",
+            "img1": "img/test_touches/Q_2.png",
             "img2": "img/test_touches/W_1.png",
             "attendu": "QWERTY"
         },
