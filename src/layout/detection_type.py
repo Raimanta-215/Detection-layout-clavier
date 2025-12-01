@@ -1,4 +1,4 @@
-from layout.detection_lettre_v4 import detection_lettre
+from layout.detection_lettre_v4 import detection_lettre_v4
 from layout.test_detetction_lettre import get_lettre_gab
 import os
 import glob
@@ -25,7 +25,7 @@ def identification_lettre(touche_detected):
         nom_gab = os.path.basename(gabarit_path)
 
         try:
-            score_actuel = detection_lettre(touche, gabarit_path, one=False)
+            score_actuel = detection_lettre_v4(touche, gabarit_path, one=False)
 
             if score_actuel > seuil_score:
                 lettre_identifie = lettre_gab
