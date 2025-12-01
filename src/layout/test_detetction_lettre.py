@@ -27,9 +27,9 @@ def test_detection_lettre():
     seuil_score = 0.65
 
 
-    toutes_les_images = sorted(glob.glob("img/test_touches/*_*.png"))
+    toutes_les_images = sorted(glob.glob("img/test_touches/*_*"))
 
-    tous_les_gabarits = sorted(glob.glob("gabarits/*/*.jpg"))
+    tous_les_gabarits = sorted(glob.glob("gabarits/*/*"))
 
     if not toutes_les_images or not tous_les_gabarits:
         print("Aucune image ou gabarit trouvé dans les dossiers spécifiés.")
