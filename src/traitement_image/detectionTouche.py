@@ -193,6 +193,7 @@ if Touche1_key is None or Touche2_key is None:
 
 
 # --- AFFICHAGE des résultats ---
+""" 
 plt.figure(figsize=(12,3))
 plt.subplot(1,3,1)
 plt.imshow(crop_and_process(I, Touche1_key), cmap='gray')
@@ -210,3 +211,5 @@ plt.title("Touche Chiffre 2")
 plt.axis('off')
 
 plt.show()
+"""
+
