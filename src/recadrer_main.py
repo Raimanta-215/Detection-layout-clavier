@@ -1,0 +1,47 @@
+from pathlib import Path
+import cv2
+import matplotlib.pyplot as plt
+
+
+from src.traitement_image.recadrage_clavier import recadrer_clavier_depuis_fichier
+#from src.layout.detection_lettre_v4 import detection_lettre
+
+
+def main():
+    print("PROJET LAYOUT")
+
+    chemin_image = Path("img/171659539527.jpg")
+    chemin_sortie = Path("img/clavier_recadrer/171659539527_recadre.jpg")
+
+    image_originale = cv2.imread(str(chemin_image))
+    clavier = recadrer_clavier_depuis_fichier(chemin_image, chemin_sortie)
+
+    if clavier is None:
+        print("❌ Aucun clavier détecté.")
+        return
+
+    print("✅ Clavier détecté et recadré !")
+    print(f"📂 Image enregistrée dans : {chemin_sortie}")
+
+    img_orig_rgb = cv2.cvtColor(image_originale, cv2.COLOR_BGR2RGB)
+    img_recadre_rgb = cv2.cvtColor(clavier, cv2.COLOR_BGR2RGB)
+
+    plt.figure(figsize=(15, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(img_orig_rgb)
+    plt.title("Clavier d'origine")
+    plt.axis("off")
+
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(img_recadre_rgb)
+    plt.title("Clavier recadré")
+    plt.axis("off")
+
+    plt.tight_layout()
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
